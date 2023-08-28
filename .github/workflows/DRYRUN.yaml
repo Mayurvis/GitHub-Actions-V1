@@ -13,6 +13,8 @@ permissions:
 jobs:
   set-env:
     runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.set-environment.outputs.environment }}
     steps:
       - name: Checkout Repository
         id: checkout-repo
@@ -21,20 +23,19 @@ jobs:
       - name: Set environment
         id: set-environment
         run: |
-          echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_ENV
-          if [ "${GITHUB_REF##*/}" == "master" ]; then
-            echo "environment=prod" >> $GITHUB_ENV
-          elif [ "${GITHUB_REF##*/}" == "dev" ]; then
-            echo "environment=dev" >> $GITHUB_ENV
-          else
-            echo "environment=dev" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
+          if [ ${GITHUB_REF##*/} == "master" ]; then
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
+          elif [ ${GITHUB_REF##*/} == "dev" ]; then
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          else 
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
           fi
 
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
-    env:
-      environment: ${{ env.environment }}
+    needs: set-env
     steps:
       - name: Checkout Repository
         id: checkout-repo
@@ -43,10 +44,10 @@ jobs:
       - name: Get AWS Role
         id: get-role
         run: |
-          if [ "${environment}" == "prod" ]; then
+          if [ ${{needs.set-env.outputs.env}} == "prod" ]; then
               echo "logging to prod...."
               export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_PROD }}"
-          elif [ "${environment}" == "dev" ]; then
+          elif [ ${{needs.set-env.outputs.env}} == "dev" ]; then
               echo "logging to dev...."
               export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_DEV }}"
           else
@@ -65,9 +66,9 @@ jobs:
       - name: Get text file from S3
         id: get-version
         run: |
-          if [ "${environment}" == "master" ]; then
+          if [ ${{needs.set-env.outputs.env}} == "prod" ]; then
               aws s3 cp s3://sre-sreportal-backend-prod/version.txt version.txt
-          elif [ "${environment}" == "dev" ]; then
+          elif [ ${{needs.set-env.outputs.env}} == "dev" ]; then
               aws s3 cp s3://sre-sreportal-backend-dev/version.txt version.txt
           else
               aws s3 cp s3://sre-sreportal-backend-dev/version.txt version.txt
