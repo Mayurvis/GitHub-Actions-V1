@@ -36,43 +36,23 @@ jobs:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
     needs: set-env
+    environment: ${{needs.set-env.outputs.env}}
     steps:
       - name: Checkout Repository
         id: checkout-repo
         uses: actions/checkout@master
-
-      - name: Get AWS Role
-        id: get-role
-        run: |
-          if [ ${{needs.set-env.outputs.env}} == "main" ]; then
-              echo "logging to prod...."
-              export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_PROD }}"
-          elif [ ${{needs.set-env.outputs.env}} == "dev" ]; then
-              echo "logging to dev...."
-              export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_DEV }}"
-          else
-              echo "logging to dev.."
-              export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_DEV }}"
-          fi
-        continue-on-error: false
 
       - name: Configure AWS Credentials
         id: configure-aws-credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: ${{ steps.get-role.outputs.role_to_assume }}
+          role-to-assume: ${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE }}
 
       - name: Get text file from S3
         id: get-version
         run: |
-          if [ ${{needs.set-env.outputs.env}} == "prod" ]; then
-              aws s3 cp s3://sre-sreportal-backend-prod/version.txt version.txt
-          elif [ ${{needs.set-env.outputs.env}} == "dev" ]; then
-              aws s3 cp s3://sre-sreportal-backend-dev/version.txt version.txt
-          else
-              aws s3 cp s3://sre-sreportal-backend-dev/version.txt version.txt
-          fi
+          aws s3 cp s3://sre-sreportal-backend-$environment/version.txt version.txt
         continue-on-error: false
 
       - name: Setpup Terraform
