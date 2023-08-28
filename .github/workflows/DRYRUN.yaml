@@ -26,7 +26,7 @@ jobs:
           echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
           if [ ${GITHUB_REF##*/} == "main" ]; then
             echo "environment=prod" >> "$GITHUB_OUTPUT"
-            echo ${{ GITHUB_OUTPUT }}
+            echo ${GIT_BRANCH}
           elif [ ${GITHUB_REF##*/} == "dev" ]; then
             echo "environment=dev" >> "$GITHUB_OUTPUT"
           else 
