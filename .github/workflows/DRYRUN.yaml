@@ -33,7 +33,7 @@ jobs:
           fi
       - name: Selected env
         id: selected-env
-        run: echo ${{GIT_BRANCH}}
+        run: echo "branch=${GIT_BRANCH}"
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
