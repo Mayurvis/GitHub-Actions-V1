@@ -27,7 +27,7 @@ jobs:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
     env:
-      environment: '${{ steps.set-environment.outputs.GIT_BRANCH }}'
+      environment: ${{ steps.set-environment.outputs.GIT_BRANCH }}
     steps:
       - name: Checkout Repository
         id: checkout-repo
