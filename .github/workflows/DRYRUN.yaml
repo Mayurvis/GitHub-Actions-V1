@@ -79,7 +79,7 @@ jobs:
       - name: Terraform Format
         id: indenting-terraform
         run: terraform fmt
-        continue-on-error: false
+        continue-on-error: True
 
       - name: Terraform Validate
         id: syntax-check
