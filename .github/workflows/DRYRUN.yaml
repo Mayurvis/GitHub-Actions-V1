@@ -31,10 +31,7 @@ jobs:
           else 
             echo "environment=dev" >> "$GITHUB_OUTPUT"
           fi
-      - name: Selected env
-        id: selected-env
-        run: echo "branch=${GIT_BRANCH}"
-        
+          
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
