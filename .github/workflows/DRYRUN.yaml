@@ -24,7 +24,7 @@ jobs:
         id: set-environment
         run: |
           echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
-          if [ ${GITHUB_REF##*/} == "master" ]; then
+          if [ ${GITHUB_REF##*/} == "main" ]; then
             echo "environment=prod" >> "$GITHUB_OUTPUT"
           elif [ ${GITHUB_REF##*/} == "dev" ]; then
             echo "environment=dev" >> "$GITHUB_OUTPUT"
@@ -44,7 +44,7 @@ jobs:
       - name: Get AWS Role
         id: get-role
         run: |
-          if [ ${{needs.set-env.outputs.env}} == "prod" ]; then
+          if [ ${{needs.set-env.outputs.env}} == "main" ]; then
               echo "logging to prod...."
               export role_to_assume="${{ secrets.SRE_PORTAL_DEPLOYMENT_ROLE_PROD }}"
           elif [ ${{needs.set-env.outputs.env}} == "dev" ]; then
