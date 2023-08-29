@@ -13,17 +13,15 @@ permissions:
 jobs:
   set-env:
     runs-on: ubuntu-latest
-    outputs:
-      env: ${{ steps.env-declaration.outputs.env }}
     steps:
-      - uses: actions/checkout@v3
       - name: Environment Declaration
         id: env-declaration
         uses: ./.github/environment/
+        
       - name: Use Action Outputs
         run: |
-          echo "Environment: ${{ needs.set-env.outputs.environment }}"
-          echo "Branch Reference: ${{ needs.set-env.outputs.branchref }}"
+          echo "Environment: ${{ needs.env-declaration.outputs.env }}"
+          echo "Branch Reference: ${{ needs.env-declaration.outputs.branchref }}"
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
