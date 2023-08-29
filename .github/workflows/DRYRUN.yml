@@ -14,18 +14,18 @@ jobs:
   set-env:
     runs-on: ubuntu-latest
     outputs:
-      env: ${{ steps.set-environment.outputs.environment }}
+      env: ${{ steps.env-declaration.outputs.env }}
     steps:
       - uses: actions/checkout@v3
       - name: Environment Declaration
         id: env-declaration
-        uses: ./.github/environment/ENV.yml
+        uses: ./.github/environment/action.yml
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
     needs: set-env
-    environment: ${{needs.set-env.outputs.env}}
+    environment: ${{needs.env-declaration.outputs.env}}
     steps:
       - name: Checkout Repository
         id: checkout-repo
