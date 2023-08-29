@@ -6,10 +6,10 @@ on:
     outputs:
       env:
         description: "Environment to deploy"
-        value: ${{ fromJSON(jobs.reusable.outputs.env) }}
+        value: ${{ jobs.reusable.outputs.env }}
       branch:
         description: "The branch from which is deployed"
-        value: ${{ fromJSON(jobs.reusable.outputs.brachref) }}
+        value: ${{ jobs.reusable.outputs.branchref }}
 
 jobs:
   reusable:
