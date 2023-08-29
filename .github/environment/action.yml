@@ -3,7 +3,7 @@ description: "Deploy's code to destination env."
 
 runs:
   using: "composite"
-  output:
+  outputs:
       env: ${{ steps.set-environment.outputs.environment }}
   steps:
       - name: Set Reference
