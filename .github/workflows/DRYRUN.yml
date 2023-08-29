@@ -20,6 +20,10 @@ jobs:
       - name: Environment Declaration
         id: env-declaration
         uses: ./.github/environment/
+      - name: Use Action Outputs
+        run: |
+          echo "Environment: ${{ needs.set-env.outputs.environment }}"
+          echo "Branch Reference: ${{ needs.set-env.outputs.branchref }}"
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
