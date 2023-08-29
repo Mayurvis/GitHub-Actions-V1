@@ -39,9 +39,9 @@ jobs:
         id: set-environment
         run: |
           echo "dryrun on ${{ github.event_name }}......"
-          if  [ ${ steps.set-ref.outputs.branchref} == "main" ]; then
+          if  [ ${{ steps.set-ref.outputs.branchref }} == "main" ]; then
               echo "environment=prod" >> "$GITHUB_OUTPUT"
-          elif [ ${ steps.set-ref.outputs.branchref} == "dev" ]; then
+          elif [ ${{ steps.set-ref.outputs.branchref }} == "dev" ]; then
               echo "environment=dev" >> "$GITHUB_OUTPUT"
           else 
               echo "environment=dev" >> "$GITHUB_OUTPUT"
@@ -50,8 +50,8 @@ jobs:
       - name: Selected env
         id: selected-env
         run: |
-          echo "branchref=${ steps.set-ref.outputs.branchref }"
-          echo "environment=${ steps.set-environment.outputs.environment }
+          echo "branchref=${{ steps.set-ref.outputs.branchref }}"
+          echo "environment=${{ steps.set-environment.outputs.environment }}
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
