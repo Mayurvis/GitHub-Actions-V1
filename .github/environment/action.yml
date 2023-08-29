@@ -1,7 +1,9 @@
 name: Environment Variable Identification
 description: "Deploy's code to destination env."
- 
+
 runs:
+  outputs:
+      env: ${{ steps.set-environment.outputs.environment }}
   steps:
       - name: Set Reference
         id: set-ref
