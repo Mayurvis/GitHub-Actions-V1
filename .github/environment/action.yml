@@ -2,11 +2,13 @@ name: Environment Variable Identification
 description: "Deploy's code to destination env."
 
 runs:
-  outputs:
+  using: "composite"
+  output:
       env: ${{ steps.set-environment.outputs.environment }}
   steps:
       - name: Set Reference
         id: set-ref
+        shell: bash
         run: |
           echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
           if [ ${{ github.event_name }} == "push" ]; then 
@@ -22,6 +24,7 @@ runs:
 
       - name: Set Environment
         id: set-environment
+        shell: bash
         run: |
           if [ "${{ steps.set-ref.outputs.branchref }}" == "main" ]; then
             echo "environment=prod" >> "$GITHUB_OUTPUT"
@@ -33,6 +36,7 @@ runs:
           
       - name: Selected env
         id: selected-env
+        shell: bash
         run: |
           echo "branchref=${{ steps.set-ref.outputs.branchref }}"
           echo "environment=${{ steps.set-environment.outputs.environment }}"
