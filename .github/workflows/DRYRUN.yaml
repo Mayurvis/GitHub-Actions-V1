@@ -20,20 +20,38 @@ jobs:
         id: checkout-repo
         uses: actions/checkout@master
 
-      - name: Set environment
-        id: set-environment
+      - name: Set Reference
+        id: set-ref
         run: |
           echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
-          if [ ${GITHUB_REF##*/} == "main" ]; then
-            echo "environment=prod" >> "$GITHUB_OUTPUT"
-          elif [ ${GITHUB_REF##*/} == "dev" ]; then
-            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          if [ ${{ github.event_name }} == "push" ]; then 
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+          elif [ ${{ github.event_name }} == "pull_request" ]; then
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_BASE_REF}" >> "$GITHUB_OUTPUT"
           else 
-            echo "environment=dev" >> "$GITHUB_OUTPUT"
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Set Environment
+        id: set-environment
+        run: |
+          echo "dryrun on ${{ github.event_name }}......"
+          if  [ ${ steps.set-ref.outputs.branchref} == "main" ]; then
+              echo "environment=prod" >> "$GITHUB_OUTPUT"
+          elif [ ${ steps.set-ref.outputs.branchref} == "dev" ]; then
+              echo "environment=dev" >> "$GITHUB_OUTPUT"
+          else 
+              echo "environment=dev" >> "$GITHUB_OUTPUT"
+          fi
+          
       - name: Selected env
         id: selected-env
-        run: echo "branch=${GIT_BRANCH}"
+        run: |
+          echo "branchref=${ steps.set-ref.outputs.branchref }"
+          echo "environment=${ steps.set-environment.outputs.environment }
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
