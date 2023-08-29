@@ -2,15 +2,6 @@ name: Environment Variable Identification
 description: "Deploy's code to destination env."
 on:
   workflow_call:
-    # Map the workflow outputs to job outputs
-    outputs:
-      env:
-        description: "Environment to deploy"
-        value: ${{ jobs.reusable.outputs.env }}
-      branch:
-        description: "The branch from which is deployed"
-        value: ${{ jobs.reusable.outputs.branchref }}
-
 jobs:
   reusable:
     name: Generate output
