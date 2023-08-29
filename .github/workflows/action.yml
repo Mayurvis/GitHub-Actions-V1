@@ -15,10 +15,10 @@ jobs:
         id: set-ref
         run: |
           echo "GIT_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
-          if [ ${{ github.event_name }} == "push" ]; then 
+          if [ ${ github.event_name } == "push" ]; then 
             echo "dryrun on ${{ github.event_name }}......"
             echo "branchref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
-          elif [ ${{ github.event_name }} == "pull_request" ]; then
+          elif [ ${ github.event_name } == "pull_request" ]; then
             echo "dryrun on ${{ github.event_name }}......"
             echo "branchref=${GITHUB_BASE_REF}" >> "$GITHUB_OUTPUT"
           else 
