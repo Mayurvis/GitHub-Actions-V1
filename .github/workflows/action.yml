@@ -8,8 +8,8 @@ jobs:
     name: Generate output
     runs-on: ubuntu-latest
     outputs:
-      env: ${{ steps.set-environment.outputs.environment }}
-      branchref: ${{ steps.set-ref.outputs.branchref }}
+      env: ${ steps.set-environment.outputs.environment }
+      branchref: ${ steps.set-ref.outputs.branchref }
     steps:
       - name: Set Reference
         id: set-ref
