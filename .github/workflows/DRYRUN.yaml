@@ -50,7 +50,7 @@ jobs:
         id: selected-env
         run: |
           echo "branchref=${{ steps.set-ref.outputs.branchref }}"
-          echo "environment=${{ steps.set-environment.outputs.environment }}
+          echo "environment=${{ steps.set-environment.outputs.environment }}"
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
