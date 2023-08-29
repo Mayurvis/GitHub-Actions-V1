@@ -13,22 +13,51 @@ permissions:
 jobs:
   set-env:
     runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.set-environment.outputs.environment }}
     steps:
-      - uses: actions/checkout@master
-      - name: Environment Declaration
-        id: env-declaration
-        uses: ./.github/workflows/
-        
-      - name: Use Action Outputs
+      - name: Checkout Repository
+        id: checkout-repo
+        uses: actions/checkout@master
+
+      - name: Set Reference
+        id: set-ref
         run: |
-          echo "Environment: ${{ needs.env-declaration.outputs.env }}"
-          echo "Branch Reference: ${{ needs.env-declaration.outputs.branchref }}"
+          echo "GIT_BRANCH=${GITHUB_REF##*/}"  >> $GITHUB_OUTPUT
+          if [ ${{ github.event_name }} == "push" ]; then 
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+          elif [ ${{ github.event_name }} == "pull_request" ]; then
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_BASE_REF}" >> "$GITHUB_OUTPUT"
+          else 
+            echo "dryrun on ${{ github.event_name }}......"
+            echo "branchref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set Environment
+        id: set-environment
+        run: |
+          if [ "${{ steps.set-ref.outputs.branchref }}" == "main" ]; then
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.set-ref.outputs.branchref }}" == "dev" ]; then
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          else 
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          fi
+          
+      - name: Selected env
+        id: selected-env
+        run: |
+          echo "branchref=${{ steps.set-ref.outputs.branchref }}"
+          echo "environment=${{ steps.set-environment.outputs.environment }}"
+
         
   sre-portal-infra-dryru:
     name: sre-portal-infra dryrun
     runs-on: ubuntu-latest
     needs: set-env
-    environment: ${{needs.env-declaration.outputs.env}}
+    environment: ${{needs.set-env.outputs.env}}
     steps:
       - name: Checkout Repository
         id: checkout-repo
@@ -77,4 +106,4 @@ jobs:
         id: terraform-plan
         run: |
           terraform plan -var-file=variables/variable-$environment.tfvars -no-color
-        continue-on-error: false
+        continue-on-error: false 
